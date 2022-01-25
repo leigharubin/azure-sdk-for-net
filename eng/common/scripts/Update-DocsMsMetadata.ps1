@@ -159,7 +159,8 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation, $packageInfo) 
   } else {
     $packageMetadata = $packageMetadataArray[0]
   }
-
+  
+  Write-Host "Reading the readme $($packageInfo.ReadMePath)"
   $readmeContent = Get-Content $packageInfo.ReadMePath -Raw -ErrorAction SilentlyContinue
   $outputReadmeContent = "" 
   if ($readmeContent) { 
@@ -172,11 +173,12 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation, $packageInfo) 
     $readMePath = $docsMsMetadata.PreviewReadMeLocation
   }
 
+  Write-Host "Reading the readme $readMePath"
   $suffix = $docsMsMetadata.Suffix
   $readMeName = "$($docsMsMetadata.DocsMsReadMeName.ToLower())-readme${suffix}.md"
 
   $readmeLocation = Join-Path $DocRepoLocation $readMePath $readMeName
-
+  Write-Host "Writing updated readme into $readmeLocation"
   Set-Content -Path $readmeLocation -Value $outputReadmeContent
 
   # Copy package info file to the docs repo
