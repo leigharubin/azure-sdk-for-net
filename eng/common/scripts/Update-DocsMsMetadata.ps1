@@ -160,7 +160,7 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation, $packageInfo) 
     $packageMetadata = $packageMetadataArray[0]
   }
 
-  $readmeContent = Get-Content $packageInfo.ReadMePath -Raw
+  $readmeContent = Get-Content $packageInfo.ReadMePath -Raw -ErrorAction SilentlyContinue
   $outputReadmeContent = "" 
   if ($readmeContent) { 
     $outputReadmeContent = GetAdjustedReadmeContent $readmeContent $packageInfo $packageMetadata
@@ -198,17 +198,16 @@ foreach ($packageInfoLocation in $PackageInfoJsonLocations) {
   try {
     # Convert package metadata json file to metadata json property.
     $packageInfo = GetPackageInfoJson $packageInfoLocation
-    Write-Host "This is the $packageInfo."
     # Add validation step for daily update and release
     if ($ValidateDocsMsPackagesFn -and (Test-Path "Function:$ValidateDocsMsPackagesFn")) {
-      Write-Host "Validating ..."
+      Write-Host "Validating the package..."
       &$ValidateDocsMsPackagesFn -PackageInfo $packageInfo -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -DocRepoLocation $DocRepoLocation
       if ($LASTEXITCODE) {
         LogError "The package failed Doc.Ms validation. Check https://aka.ms/azsdk/docs/docker for more details on how to diagnose this issue."
         exit $LASTEXITCODE
       }
     }
-    Write-Host "Updating ..."
+    Write-Host "Updating the package json ..."
     UpdateDocsMsMetadataForPackage $packageInfoLocation $packageInfo
   }
   catch {
