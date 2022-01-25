@@ -129,7 +129,6 @@ function GetPackageInfoJson ($packageInfoJsonLocation) {
     LogWarning "Package metadata not found for $packageInfoJsonLocation"
     return
   }
-  
   $packageInfoJson = Get-Content $packageInfoJsonLocation -Raw
   $packageInfo = ConvertFrom-Json $packageInfoJson
   if ($packageInfo.DevVersion) {
@@ -199,14 +198,17 @@ foreach ($packageInfoLocation in $PackageInfoJsonLocations) {
   try {
     # Convert package metadata json file to metadata json property.
     $packageInfo = GetPackageInfoJson $packageInfoLocation
+    Write-Host "This is the $packageInfo."
     # Add validation step for daily update and release
     if ($ValidateDocsMsPackagesFn -and (Test-Path "Function:$ValidateDocsMsPackagesFn")) {
+      Write-Host "Validating ..."
       &$ValidateDocsMsPackagesFn -PackageInfo $packageInfo -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -DocRepoLocation $DocRepoLocation
       if ($LASTEXITCODE) {
         LogError "The package failed Doc.Ms validation. Check https://aka.ms/azsdk/docs/docker for more details on how to diagnose this issue."
         exit $LASTEXITCODE
       }
     }
+    Write-Host "Updating ..."
     UpdateDocsMsMetadataForPackage $packageInfoLocation $packageInfo
   }
   catch {
