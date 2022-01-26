@@ -160,20 +160,20 @@ function UpdateDocsMsMetadataForPackage($packageInfoJsonLocation, $packageInfo) 
     $packageMetadata = $packageMetadataArray[0]
   }
   
-  Write-Host "Reading the readme $($packageInfo.ReadMePath)"
+  Write-Host "Reading the readme1 $($packageInfo.ReadMePath)"
+  
   $readmeContent = Get-Content $packageInfo.ReadMePath -Raw -ErrorAction SilentlyContinue
   $outputReadmeContent = "" 
   if ($readmeContent) { 
     $outputReadmeContent = GetAdjustedReadmeContent $readmeContent $packageInfo $packageMetadata
   }
-
   $docsMsMetadata = &$GetDocsMsMetadataForPackageFn $packageInfo
   $readMePath = $docsMsMetadata.LatestReadMeLocation
   if ($originalVersion.IsPrerelease) { 
     $readMePath = $docsMsMetadata.PreviewReadMeLocation
   }
 
-  Write-Host "Reading the readme $readMePath"
+  Write-Host "Reading the readme2 $readMePath"
   $suffix = $docsMsMetadata.Suffix
   $readMeName = "$($docsMsMetadata.DocsMsReadMeName.ToLower())-readme${suffix}.md"
 
@@ -213,6 +213,6 @@ foreach ($packageInfoLocation in $PackageInfoJsonLocations) {
     UpdateDocsMsMetadataForPackage $packageInfoLocation $packageInfo
   }
   catch {
-    Write-Error $_
+    Write-Error $_ -ErrorAction SilentlyContinue
   }
 }

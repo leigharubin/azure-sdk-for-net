@@ -136,7 +136,7 @@ function Get-AllPkgProperties ([string]$ServiceDirectory = $null)
 
 # Given the metadata url under https://github.com/Azure/azure-sdk/tree/main/_data/releases/latest,
 # the function will return the csv metadata back as part of response.
-function Get-CSVMetadata ([string]$MetadataUri=$MetadataUri)
+function Get-CSVMetadata ([string]$MetadataUri="https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/dotnet-packages.csv")
 {
     $metadataResponse = Invoke-RestMethod -Uri $MetadataUri -method "GET" -MaximumRetryCount 3 -RetryIntervalSec 10 | ConvertFrom-Csv
     return $metadataResponse
